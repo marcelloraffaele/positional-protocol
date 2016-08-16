@@ -2,6 +2,8 @@ package it.rmarcello.protocol.bean;
 
 import it.rmarcello.protocol.annotation.BufferIn;
 import it.rmarcello.protocol.annotation.BufferOut;
+import it.rmarcello.protocol.annotation.FillerType;
+import it.rmarcello.protocol.annotation.NumericEncoding;
 import it.rmarcello.protocol.annotation.ProtocolField;
 
 /**
@@ -15,10 +17,10 @@ public class ExampleBean {
     @ProtocolField(size=4)
     private String type;        //4
     
-    @ProtocolField(size=3)
+    @ProtocolField(size=3, numericEncoding = NumericEncoding.BINARY)
     private Integer version;    //3
     
-    @ProtocolField(size=6)
+    @ProtocolField(size=6, filler = FillerType.LEFT)
     private String name;        //6
     
     @ProtocolField(size=10)

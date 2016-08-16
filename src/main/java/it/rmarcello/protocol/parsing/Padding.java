@@ -17,6 +17,17 @@ public class Padding {
         return res;
     }
     
+    public static String padRight(String s, int size) {
+        String res = "";
+        if(s!=null)
+            res+=s;
+        if( res.length()<size ) {
+            for(int i=res.length();i<size;i++)
+                res=" "+res;
+        }
+        return res;
+    }
+    
     public static String pad(Integer x, int size) {
         String res = "";
         if(x!=null)
