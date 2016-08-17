@@ -5,10 +5,13 @@ import it.rmarcello.protocol.annotation.BufferOut;
 import it.rmarcello.protocol.exception.ProtocolException;
 import java.io.ByteArrayOutputStream;
 import it.rmarcello.protocol.annotation.ProtocolField;
-import it.rmarcello.protocol.parsing.Padding;
+import it.rmarcello.protocol.converters.Converter;
+import it.rmarcello.protocol.converters.ScalarsConverterFactory;
+import it.rmarcello.protocol.utils.BufferUtils;
 import it.rmarcello.protocol.utils.AnnotationUtils;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -17,8 +20,7 @@ import java.util.List;
  */
 public class EngineImpl implements Engine {
 
-    public EngineImpl() {
-
+    protected EngineImpl() {
     }
 
     /**
@@ -30,7 +32,7 @@ public class EngineImpl implements Engine {
      * @throws ProtocolException
      */
     @Override
-    public <T> T fromBytes(byte[] buffer, Class<T> c) throws ProtocolException {
+    public <T> T parseFrom(byte[] buffer, Class<T> c) throws ProtocolException {
         try {
 
             //create the result class
@@ -54,7 +56,7 @@ public class EngineImpl implements Engine {
                     bais.read(fieldBytes);
 
                     //create the arg
-                    Object objArg = covertToObject(fieldBytes, reflectField.getType());
+                    Object objArg = ScalarsConverterFactory.create().byteToObjectConverter( reflectField.getType() ).convert( fieldBytes, protocolField );
                     
 //                    System.out.println("-> " + reflectField.getName() + ": " + reflectField.getType() + ": " + objArg );
                     
@@ -82,7 +84,7 @@ public class EngineImpl implements Engine {
      * @throws ProtocolException
      */
     @Override
-    public <T> byte[] toBytes(T obj) throws ProtocolException {
+    public <T> byte[] toByteArray(T obj) throws ProtocolException {
         try {
             Class c = obj.getClass();
 
@@ -105,7 +107,8 @@ public class EngineImpl implements Engine {
 //                        System.out.println(reflectField.getName() + " = " + value);
 
                         //convert the value in byte array
-                        byte[] bytesToWrite = covertToBytes(protocolField, value);
+                        Converter<Object, byte[]> converter = (Converter<Object, byte[]>) ScalarsConverterFactory.create().objectToByteConverter( reflectField.getType() );
+                        byte[] bytesToWrite = converter.convert( value, protocolField );
                         
                         baos.write( bytesToWrite );
 
@@ -122,32 +125,34 @@ public class EngineImpl implements Engine {
 
     }
 
-    public static byte[] covertToBytes(ProtocolField protocolField, Object value) throws ProtocolException {
-        byte[] res = null;
-        if (value instanceof String) {
-            res = Padding.padLeft((String) value, protocolField.size()).getBytes();
-        } else if (value instanceof Integer) {
-            res = Padding.pad((Integer) value, protocolField.size()).getBytes();
-        }
-        
-        else {
-            throw new ProtocolException("Not recognized type: " + value.getClass().getCanonicalName() );
-        }
+//    public static byte[] covertToBytes(ProtocolField protocolField, Object value, Type type) throws ProtocolException {
+//        byte[] res = null;
+//        if (type == String.class ) {
+//            res = BufferUtils.padLeft((String) value, protocolField.size()).getBytes();
+//        } else if (type == Integer.class || type == int.class ) {
+//            res = BufferUtils.pad((Integer) value, protocolField.size()).getBytes();
+//        }
+//        
+//        else {
+//            throw new ProtocolException("Not recognized type: " + type );
+//        }
+//
+//        return res;
+//    }
 
-        return res;
-    }
-
-    private static Object covertToObject(byte[] fieldBytes, Class<?> parameterType) throws ProtocolException {
-
-        if (parameterType.getCanonicalName().equals(String.class.getCanonicalName())) {
-            return new String(fieldBytes);
-        } else if (parameterType.getCanonicalName().equals(Integer.class.getCanonicalName())) {
-            return Integer.parseInt(new String(fieldBytes));
-        }
-        
-        else {
-            throw new ProtocolException("Not recognized type: " + parameterType.getCanonicalName() );
-        }
-    }
+//    private static Object covertToObject(byte[] fieldBytes, Type type) throws ProtocolException {
+//
+//        System.out.println("type = " + type);
+//        
+//        if ( type == String.class ) {
+//            return new String(fieldBytes);
+//        } else if (type == Integer.class || type == int.class ) {
+//            return Integer.parseInt(new String(fieldBytes));
+//        }
+//        
+//        else {
+//            throw new ProtocolException("Not recognized type: " + type );
+//        }
+//    }
 
 }

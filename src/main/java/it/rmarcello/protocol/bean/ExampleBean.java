@@ -17,7 +17,7 @@ public class ExampleBean {
     @ProtocolField(size=4)
     private String type;        //4
     
-    @ProtocolField(size=3, numericEncoding = NumericEncoding.BINARY)
+    @ProtocolField(size=3)
     private Integer version;    //3
     
     @ProtocolField(size=6, filler = FillerType.LEFT)

@@ -1,5 +1,6 @@
 package it.rmarcello.protocol.bean;
 
+import it.rmarcello.protocol.annotation.FillerType;
 import it.rmarcello.protocol.annotation.ProtocolField;
 import java.util.List;
 
@@ -9,12 +10,15 @@ import java.util.List;
  */
 public class ExampleBody extends ExampleHeader{
 
-    @ProtocolField(size=10)
+    @ProtocolField(size=10, filler = FillerType.LEFT)
     private String title;
     
     @ProtocolField(size=20)
     private String text;
         
+    @ProtocolField(size=3)
+    private int mynumber;
+    
 //    @ProtocolField(size=20)
 //    private List<Integer> list;
     
@@ -40,7 +44,7 @@ public class ExampleBody extends ExampleHeader{
 
     @Override
     public String toString() {
-        return "ExampleBody{" + super.toString() + ", title=" + title + ", text=" + text + '}';
+        return "ExampleBody{" + super.toString() + ", title=" + title + ", text=" + text + ", mynumber=" + mynumber + '}';
     }
     
 }
