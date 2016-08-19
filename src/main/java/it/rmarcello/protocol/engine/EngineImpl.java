@@ -55,14 +55,15 @@ public class EngineImpl implements Engine {
                     byte[] fieldBytes = new byte[protocolField.size()];
                     bais.read(fieldBytes);
 
-                    //create the arg
-                    Object objArg = ScalarsConverterFactory.create().byteToObjectConverter( reflectField.getType() ).convert( fieldBytes, protocolField );
-                    
-//                    System.out.println("-> " + reflectField.getName() + ": " + reflectField.getType() + ": " + objArg );
-                    
-                    //write the field
-                    AnnotationUtils.writeField(reflectField, obj, objArg);
-                    
+                    if( reflectField.getType().isArray() ) {
+                        throw new ProtocolException("Arrays are not implemented in this version");
+                    } else {
+                        //create the arg
+                        Object objArg = ScalarsConverterFactory.create().byteToObjectConverter( reflectField.getType() ).convert( fieldBytes, protocolField );
+        //                    System.out.println("-> " + reflectField.getName() + ": " + reflectField.getType() + ": " + objArg );
+                        //write the field
+                        AnnotationUtils.writeField(reflectField, obj, objArg);
+                    }
                 }
 
             } else {
