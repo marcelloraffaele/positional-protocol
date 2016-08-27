@@ -65,8 +65,6 @@ public class StringTest {
         public StringBean() {
         }
 
-        
-        
         public String getName() {
             return name;
         }
