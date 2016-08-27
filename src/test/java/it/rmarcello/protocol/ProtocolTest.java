@@ -1,77 +1,101 @@
 package it.rmarcello.protocol;
 
-import it.rmarcello.protocol.bean.ExampleBean;
-import it.rmarcello.protocol.engine.EngineImpl;
-import it.rmarcello.protocol.exception.ProtocolException;
-import java.util.Arrays;
-import org.junit.Assert;
-import org.junit.Test;
+import it.rmarcello.protocol.annotation.BufferIn;
+import it.rmarcello.protocol.annotation.BufferOut;
+import it.rmarcello.protocol.annotation.FillerType;
+import it.rmarcello.protocol.annotation.NumericEncoding;
+import it.rmarcello.protocol.annotation.ProtocolField;
 
 /**
  *
  * @author rmarcello
  */
 public class ProtocolTest {
-//
-//    @Test
-//    public void testParsing() throws ProtocolException {
-//        String type = "ABCD";
-//        String version = "001";
-//        String name = "Name01";
-//        String description = "abcdefghil";
-//        byte[] b = (type + version + name + description).getBytes();
-//
-//        ExampleBean bean = (ExampleBean) EngineImpl.fromBytes(b, ExampleBean.class);
-//
-//        System.out.println("-> " + bean);
-//        Assert.assertNotNull(bean);
-//        Assert.assertEquals(bean.getType(), type);
-//        Assert.assertEquals(bean.getVersion(), new Integer(1));
-//        Assert.assertEquals(bean.getName(), name);
-//        Assert.assertEquals(bean.getDescription(), description);
-//    }
-//
-//    @Test
-//    public void testToByte() throws ProtocolException {
-//        
-//        String type = "ABCD";
-//        String version = "001";
-//        String name = "Name01";
-//        String description = "abcdefghil";
-//        byte[] b = (type + version + name + description).getBytes();
-//        
-//        ExampleBean bean = new ExampleBean();
-//        bean.setType( type );
-//        bean.setVersion( Integer.parseInt(version) );
-//        bean.setName(name);
-//        bean.setDescription(description);
-//
-//        byte[] res = EngineImpl.toBytes(bean);
-//        
-//        Assert.assertTrue(Arrays.equals(res, b));
-//    }
-//
-//    @Test
-//    public void testParsingAndToByte() throws ProtocolException {
-//        String s = "ABCD"
-//                + "001"
-//                + "Name01"
-//                + "abcdefghil";
-//        byte[] b = s.getBytes();
-//
-//        System.out.println("buff= " + s);
-//
-//        ExampleBean bean = (ExampleBean) EngineImpl.fromBytes(b, ExampleBean.class);
-//
-//        System.out.println("-> " + bean);
-//
-//        byte[] res = EngineImpl.toBytes(bean);
-//
-//        String resStr = new String(res);
-//
-//        System.out.println("check = " + resStr);
-//
-//        Assert.assertTrue(Arrays.equals(res, b));
-//    }
 
+    @BufferIn
+    @BufferOut
+    static class ExampleHeader {
+
+        @ProtocolField(size = 4)
+        protected String messageId;
+
+        @ProtocolField(size = 3)
+        protected Integer version;
+
+        @ProtocolField(size = 3)
+        protected Long length;
+
+        public ExampleHeader() {
+        }
+
+        public String getMessageId() {
+            return messageId;
+        }
+
+        public void setMessageId(String messageId) {
+            this.messageId = messageId;
+        }
+
+        public Integer getVersion() {
+            return version;
+        }
+
+        public void setVersion(Integer version) {
+            this.version = version;
+        }
+
+        public Long getLength() {
+            return length;
+        }
+
+        public void setLength(Long length) {
+            this.length = length;
+        }
+
+        @Override
+        public String toString() {
+            return "Header{" + "messageId=" + messageId + ", version=" + version + ", length=" + length + '}';
+        }
+
+    }
+
+    static class ExampleBody extends ExampleHeader {
+
+        @ProtocolField(size = 10, filler = FillerType.LEFT)
+        private String title;
+
+        @ProtocolField(size = 20)
+        private String text;
+
+        @ProtocolField(size = 3, numericEncoding = NumericEncoding.TEXT)
+        private int mynumber;
+
+//    @ProtocolField(size=20)
+//    private List<Integer> list;
+        public ExampleBody() {
+            super();
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return "ExampleBody{" + super.toString() + ", title=" + title + ", text=" + text + ", mynumber=" + mynumber + '}';
+        }
+
+    }
 }

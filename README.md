@@ -37,4 +37,71 @@ StringBean bean = EngineFactory.create().parseFrom(buffer1, StringBean.class );
 byte[] buffer = EngineFactory.create().toByteArray(bean);
 ```
 
-The project is not completed at this version it maps only Strings and Integer fields.
+## Mapping of all scalar types
+
+All the scalar types are enabled:
+- int/Integer
+- short/Short
+- byte/Byte
+- long/Long
+- String
+
+And this is an example:
+
+```
+@BufferIn
+@BufferOut
+static class ExampleHeader {
+
+	@ProtocolField(size = 4)
+	protected String messageId;
+
+	@ProtocolField(size = 3)
+	protected Integer version;
+
+	@ProtocolField(size = 3)
+	protected Long length;
+	
+	//...
+}
+```
+
+## Support inheritance
+The developer can define a new classes from existing classes.
+The mapping works appending the fields to the super class fields.
+
+```
+class ExampleBody extends ExampleHeader {
+
+	@ProtocolField(size = 10, filler = FillerType.LEFT)
+	private String title;
+
+	@ProtocolField(size = 20)
+	private String text;
+
+	@ProtocolField(size = 3)
+	private int mynumber;
+	//...
+}
+```
+
+The library is the same:
+
+```
+//parsing
+ExampleBody bodyMsg = e.parseFrom(s.getBytes() , ExampleBody.class);
+//covert to byte array
+byte[] v = e.toByteArray(bodyMsg);
+```
+
+## Different kind of String filling
+```
+@ProtocolField(size = 10, filler = FillerType.LEFT)	//fill on left
+@ProtocolField(size = 10, filler = FillerType.RIGHT)	//fill on right
+```
+
+## Different kind of Numeric encoding
+```
+@ProtocolField(size = 3, numericEncoding = NumericEncoding.TEXT)
+@ProtocolField(size = 3, numericEncoding = NumericEncoding.BYNARY)
+```
