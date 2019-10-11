@@ -9,7 +9,7 @@ Create buffer beans is very simple and very similar to Hibernate/Java Persistenc
 
 You can define simple POJO Beans using few simple Annotation to define the mapping:
 
-```
+```java
 @BufferIn
 @BufferOut
 public static class StringBean {
@@ -29,7 +29,7 @@ public static class StringBean {
 
 Coversion is very simple and need only one line of code:
 
-```
+```java
 //parsing
 StringBean bean = EngineFactory.create().parseFrom(buffer1, StringBean.class );
 
@@ -48,7 +48,7 @@ All the scalar types are enabled:
 
 And this is an example:
 
-```
+```java
 @BufferIn
 @BufferOut
 static class ExampleHeader {
@@ -70,7 +70,7 @@ static class ExampleHeader {
 The developer can define a new classes from existing classes.
 The mapping works appending the fields to the super class fields.
 
-```
+```java
 class ExampleBody extends ExampleHeader {
 
 	@ProtocolField(size = 10, filler = FillerType.LEFT)
@@ -87,7 +87,7 @@ class ExampleBody extends ExampleHeader {
 
 The library is the same:
 
-```
+```java
 //parsing
 ExampleBody bodyMsg = e.parseFrom(s.getBytes() , ExampleBody.class);
 //covert to byte array
@@ -95,13 +95,13 @@ byte[] v = e.toByteArray(bodyMsg);
 ```
 
 ## Different kind of String filling
-```
+```java
 @ProtocolField(size = 10, filler = FillerType.LEFT)	//fill on left
 @ProtocolField(size = 10, filler = FillerType.RIGHT)	//fill on right
 ```
 
 ## Different kind of Numeric encoding
-```
+```java
 @ProtocolField(size = 3, numericEncoding = NumericEncoding.TEXT)
 @ProtocolField(size = 3, numericEncoding = NumericEncoding.BYNARY)
 ```
