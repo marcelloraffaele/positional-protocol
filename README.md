@@ -76,8 +76,8 @@ public abstract class HeaderProtocol {
     
     @ProtocolField(size=3, numericEncoding = NumericEncoding.BINARY)
     protected Integer length;
-	
-	//constructor, get and setter
+    
+    //constructor, get and setter
 }
 
 
@@ -95,8 +95,8 @@ public class HeartBeatProtocol extends HeaderProtocol {
 
     @ProtocolField(size = 3)
 	private byte[] crc;
-	
-	//constructor, get and setter
+    
+    //constructor, get and setter
 
 }
 ```
@@ -117,8 +117,11 @@ byte[] heartBeatByte = engine.toByte(heartBeat);
 
 ## Different kind of String filling
 ```java
-@ProtocolField(size = 10, filler = FillerType.LEFT)		//fill on left
-@ProtocolField(size = 10, filler = FillerType.RIGHT)	//fill on right
+//fill on left
+@ProtocolField(size = 10, filler = FillerType.LEFT)
+
+//fill on right
+@ProtocolField(size = 10, filler = FillerType.RIGHT)
 ```
 
 ## Different kind of Numeric encoding
