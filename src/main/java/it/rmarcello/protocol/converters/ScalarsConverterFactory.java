@@ -1,6 +1,8 @@
 package it.rmarcello.protocol.converters;
 
+import it.rmarcello.protocol.converters.ScalarsProtocolConverters.AyyayByteToArrayByteConverter;
 import it.rmarcello.protocol.converters.ScalarsProtocolConverters.BooleanToByteConverter;
+import it.rmarcello.protocol.converters.ScalarsProtocolConverters.ByteArrayToByteConverter;
 import it.rmarcello.protocol.converters.ScalarsProtocolConverters.ByteToBooleanConverter;
 import it.rmarcello.protocol.converters.ScalarsProtocolConverters.ByteToByteConverter;
 import it.rmarcello.protocol.converters.ScalarsProtocolConverters.ByteToByteConverter2;
@@ -49,6 +51,9 @@ public final class ScalarsConverterFactory extends Converter.Factory {
         if (type == Long.class || type == long.class) {
             return ByteToLongConverter.INSTANCE;
         }
+        if (type == byte[].class) {
+            return AyyayByteToArrayByteConverter.INSTANCE;
+        }
 
         throw new ProtocolException("Not recognized type: " + type.getTypeName());
 
@@ -74,6 +79,9 @@ public final class ScalarsConverterFactory extends Converter.Factory {
         }
         if (type == Long.class || type == long.class) {
             return LongToByteConverter.INSTANCE;
+        }
+        if (type == byte[].class) {
+            return ByteArrayToByteConverter.INSTANCE;
         }
 
         throw new ProtocolException("Not recognized type: " + type.getTypeName());

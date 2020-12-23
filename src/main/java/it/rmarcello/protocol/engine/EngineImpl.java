@@ -1,7 +1,6 @@
 package it.rmarcello.protocol.engine;
 
-import it.rmarcello.protocol.annotation.BufferIn;
-import it.rmarcello.protocol.annotation.BufferOut;
+import it.rmarcello.protocol.annotation.ProtocolEntity;
 import it.rmarcello.protocol.exception.ProtocolException;
 import java.io.ByteArrayOutputStream;
 import it.rmarcello.protocol.annotation.ProtocolField;
@@ -32,17 +31,17 @@ public class EngineImpl implements Engine {
      * @throws ProtocolException
      */
     @Override
-    public <T> T parseFrom(byte[] buffer, Class<T> c) throws ProtocolException {
+    public <T> T fromByte(byte[] buffer, Class<T> c) throws ProtocolException {
         try {
 
             //create the result class
-            T obj = c.newInstance();
+            T obj = c.getDeclaredConstructor().newInstance();
 
             //initialize the buffer out
             ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
 
-            //verify if the current Object has the @BufferIn annotation
-            if (c.isAnnotationPresent(BufferIn.class)) {
+            //verify if the current Object has the @ProtocolEntity annotation
+            if (c.isAnnotationPresent(ProtocolEntity.class)) {
 
                 //get all the fields with @ProtocolField annotation
                 List<Field> fieldsWithAnnotation = AnnotationUtils.getFieldsListWithAnnotation(c, ProtocolField.class);
@@ -55,15 +54,13 @@ public class EngineImpl implements Engine {
                     byte[] fieldBytes = new byte[protocolField.size()];
                     bais.read(fieldBytes);
 
-                    if( reflectField.getType().isArray() ) {
-                        throw new ProtocolException("Arrays are not implemented in this version");
-                    } else {
-                        //create the arg
-                        Object objArg = ScalarsConverterFactory.create().byteToObjectConverter( reflectField.getType() ).convert( fieldBytes, protocolField );
-        //                    System.out.println("-> " + reflectField.getName() + ": " + reflectField.getType() + ": " + objArg );
-                        //write the field
-                        AnnotationUtils.writeField(reflectField, obj, objArg);
-                    }
+                    
+                    //create the arg
+                    Object objArg = ScalarsConverterFactory.create().byteToObjectConverter( reflectField.getType() ).convert( fieldBytes, protocolField );
+    //                    LOGGER.info("-> " + reflectField.getName() + ": " + reflectField.getType() + ": " + objArg );
+                    //write the field
+                    AnnotationUtils.writeField(reflectField, obj, objArg);
+                    
                 }
 
             } else {
@@ -85,12 +82,12 @@ public class EngineImpl implements Engine {
      * @throws ProtocolException
      */
     @Override
-    public <T> byte[] toByteArray(T obj) throws ProtocolException {
+    public <T> byte[] toByte(T obj) throws ProtocolException {
         try {
             Class c = obj.getClass();
 
-            //verify if the current Object has the @BufferOut annotation
-            if ( c.isAnnotationPresent(BufferOut.class) ) {
+            //verify if the current Object has the @ProtocolEntity annotation
+            if ( c.isAnnotationPresent(ProtocolEntity.class) ) {
 
                 //initialize the buffer out
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -105,8 +102,6 @@ public class EngineImpl implements Engine {
                         //read the field
                         Object value = AnnotationUtils.readField( reflectField, obj);
                         
-//                        System.out.println(reflectField.getName() + " = " + value);
-
                         //convert the value in byte array
                         Converter<Object, byte[]> converter = (Converter<Object, byte[]>) ScalarsConverterFactory.create().objectToByteConverter( reflectField.getType() );
                         byte[] bytesToWrite = converter.convert( value, protocolField );
@@ -120,6 +115,8 @@ public class EngineImpl implements Engine {
             } else {
                 throw new ProtocolException("The object isn't a BufferOut");
             }
+        } catch (ProtocolException pe) {
+            throw pe;
         } catch (Exception e) {
             throw new ProtocolException("Error", e);
         }
@@ -143,7 +140,7 @@ public class EngineImpl implements Engine {
 
 //    private static Object covertToObject(byte[] fieldBytes, Type type) throws ProtocolException {
 //
-//        System.out.println("type = " + type);
+//        LOGGER.info("type = " + type);
 //        
 //        if ( type == String.class ) {
 //            return new String(fieldBytes);

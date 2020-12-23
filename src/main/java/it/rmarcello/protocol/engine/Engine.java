@@ -8,8 +8,8 @@ import it.rmarcello.protocol.exception.ProtocolException;
  */
 public interface Engine {
 
-    public <T> T parseFrom(byte[] buffer, Class<T> c) throws ProtocolException;
+    public <T> T fromByte(byte[] buffer, Class<T> c) throws ProtocolException;
     
-    public <T> byte[] toByteArray(T t) throws ProtocolException;
+    public <T> byte[] toByte(T t) throws ProtocolException;
     
 }

@@ -96,6 +96,16 @@ public class ScalarsProtocolConverters {
         }
     }
 
+    static final class AyyayByteToArrayByteConverter implements Converter<byte[], byte[]> {
+
+        static final AyyayByteToArrayByteConverter INSTANCE = new AyyayByteToArrayByteConverter();
+
+        @Override
+        public byte[] convert(byte[] value, ProtocolField protocolField) throws ProtocolException {
+            return value;
+        }
+    }
+
     //OBJECT TO BYTE
     static final class StringToByteConverter<T> implements Converter<T, byte[]> {
 
@@ -190,6 +200,17 @@ public class ScalarsProtocolConverters {
         public byte[] convert(T t, ProtocolField protocolField) throws ProtocolException {
             Byte value = (Byte) t;
             return new byte[] { value.byteValue() };
+        }
+    }
+
+    static final class ByteArrayToByteConverter<T> implements Converter<T, byte[]> {
+
+        static final ByteArrayToByteConverter<Object> INSTANCE = new ByteArrayToByteConverter<>();
+
+        @Override
+        public byte[] convert(T t, ProtocolField protocolField) throws ProtocolException {
+            byte[] value = (byte[]) t;
+            return value;
         }
     }
 }

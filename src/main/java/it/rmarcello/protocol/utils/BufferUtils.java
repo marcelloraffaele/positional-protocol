@@ -40,12 +40,13 @@ public class BufferUtils {
         return toBinary((long) value, size);
     }
 
-    public static byte[] toBinary(Long value, int size) {
-        String hexString = Long.toHexString(value);
-
-        String hexStringPadded = pad(hexString, '0', size + size);
-
-        return hexToByteArray(hexStringPadded);
+    public static byte[] toBinary(Long l, int size) {
+        byte[] result = new byte[size];
+        for (int i = size-1; i >= 0; i--) {
+            result[i] = (byte)(l & 0xFF);
+            l >>= 8;
+        }
+        return result;
 
     }
     

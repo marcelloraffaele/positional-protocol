@@ -12,6 +12,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 @Inherited
 @Retention(RUNTIME)
-public @interface BufferOut {
+public @interface ProtocolEntity {
     
 }
